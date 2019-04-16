@@ -5,11 +5,15 @@ import _ from 'lodash';
 import Table from './commons/table';
 import { getMovies } from '../services/fakeMovieService';
 import { getGenres } from '../services/fakeGenreService';
+import Pagination from './commons/pagination';
+import { pagination } from '../utils/pagination';
 
 class MovieMain extends Component {
   state = {
     movies: [],
     genres: [],
+    items: 4,
+    currentPage: 1,
     sortColumn: { path: 'title', order: 'asc' }
   };
 
@@ -33,8 +37,12 @@ class MovieMain extends Component {
     this.setState({ sortColumn });
   };
 
+  handlePageChange = page => {
+    this.setState({ currentPage: page });
+  };
+
   render() {
-    const { movies, sortColumn } = this.state;
+    const { movies, sortColumn, currentPage, items } = this.state;
 
     const movieList = movies.map(movie => movie);
 
@@ -43,14 +51,29 @@ class MovieMain extends Component {
       [sortColumn.path],
       [sortColumn.order]
     );
+
+    const moviePageList = pagination(sortedList, currentPage, items);
+    const totalCount = movieList.length;
+
     return (
-      <Table
-        data={sortedList}
-        sortColumn={this.state.sortColumn}
-        onLike={this.handleLike}
-        onDelete={this.handleDelete}
-        onSort={this.handleColumnSort}
-      />
+      <React.Fragment>
+        <Table
+          data={moviePageList}
+          sortColumn={this.state.sortColumn}
+          onLike={this.handleLike}
+          onDelete={this.handleDelete}
+          onSort={this.handleColumnSort}
+        />
+
+        <div className="container">
+          <Pagination
+            itemCount={totalCount}
+            pageSize={items}
+            currentPage={currentPage}
+            onPageChange={this.handlePageChange}
+          />
+        </div>
+      </React.Fragment>
     );
   }
 }
