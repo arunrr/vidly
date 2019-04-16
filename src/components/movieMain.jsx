@@ -71,6 +71,7 @@ class MovieMain extends Component {
 
     const moviePageList = pagination(sortedList, currentPage, items);
     const totalCount = filteredList.length;
+    const count = movies.length;
 
     return (
       <div className="row">
@@ -82,6 +83,11 @@ class MovieMain extends Component {
           />
         </div>
         <div className="col">
+          <p>
+            {count !== 0
+              ? 'Total Movies Available ' + totalCount
+              : 'There are no movies available in the list !!!'}
+          </p>
           <Table
             data={moviePageList}
             sortColumn={this.state.sortColumn}
