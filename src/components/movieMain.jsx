@@ -22,6 +22,11 @@ class MovieMain extends Component {
     this.setState({ movies });
   };
 
+  handleDelete = movie => {
+    const movies = this.state.movies.filter(m => m._id !== movie._id);
+    this.setState({ movies });
+  };
+
   handleColumnSort = sortColumn => {
     this.setState({ sortColumn });
   };
@@ -33,6 +38,7 @@ class MovieMain extends Component {
         data={movieList}
         sortColumn={this.state.sortColumn}
         onLike={this.handleLike}
+        onDelete={this.handleDelete}
         onSort={this.handleColumnSort}
       />
     );
