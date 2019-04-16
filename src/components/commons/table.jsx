@@ -41,7 +41,7 @@ class Table extends Component {
   ];
 
   render() {
-    const { sortColumn, onSort } = this.props;
+    const { data, sortColumn, onSort } = this.props;
     // Returns table
     return (
       <table className="table">
@@ -50,7 +50,7 @@ class Table extends Component {
           onSort={onSort}
           columns={this.columns}
         />
-        <TableBody data={this.props.data} columns={this.columns} />
+        <TableBody data={data} columns={this.columns} />
       </table>
     );
   }
