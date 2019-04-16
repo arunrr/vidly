@@ -7,18 +7,21 @@ import { getMovies } from '../services/fakeMovieService';
 import { getGenres } from '../services/fakeGenreService';
 import Pagination from './commons/pagination';
 import { pagination } from '../utils/pagination';
+import ListGroup from './commons/listGroup';
 
 class MovieMain extends Component {
   state = {
     movies: [],
     genres: [],
+    selectedGenre: null,
     items: 4,
     currentPage: 1,
     sortColumn: { path: 'title', order: 'asc' }
   };
 
   componentDidMount() {
-    this.setState({ movies: getMovies(), genres: getGenres() });
+    const genres = [{ _id: 0, name: 'All Genres' }, ...getGenres()];
+    this.setState({ movies: getMovies(), genres: genres });
   }
 
   handleLike = m => {
@@ -41,39 +44,62 @@ class MovieMain extends Component {
     this.setState({ currentPage: page });
   };
 
-  render() {
-    const { movies, sortColumn, currentPage, items } = this.state;
+  handleSelectedGenre = genre => {
+    this.setState({ selectedGenre: genre, currentPage: 1 });
+  };
 
-    const movieList = movies.map(movie => movie);
+  render() {
+    const {
+      movies,
+      sortColumn,
+      currentPage,
+      items,
+      genres,
+      selectedGenre
+    } = this.state;
+
+    const filteredList =
+      selectedGenre && selectedGenre._id !== 0
+        ? movies.filter(movie => movie.genre._id === selectedGenre._id)
+        : movies;
 
     const sortedList = _.orderBy(
-      movieList,
+      filteredList,
       [sortColumn.path],
       [sortColumn.order]
     );
 
     const moviePageList = pagination(sortedList, currentPage, items);
-    const totalCount = movieList.length;
+    const totalCount = filteredList.length;
 
     return (
-      <React.Fragment>
-        <Table
-          data={moviePageList}
-          sortColumn={this.state.sortColumn}
-          onLike={this.handleLike}
-          onDelete={this.handleDelete}
-          onSort={this.handleColumnSort}
-        />
-
-        <div className="container">
-          <Pagination
-            itemCount={totalCount}
-            pageSize={items}
-            currentPage={currentPage}
-            onPageChange={this.handlePageChange}
+      <div className="row">
+        <div className="col-3">
+          <ListGroup
+            items={genres}
+            onItemSelect={this.handleSelectedGenre}
+            selectedItem={selectedGenre}
           />
         </div>
-      </React.Fragment>
+        <div className="col">
+          <Table
+            data={moviePageList}
+            sortColumn={this.state.sortColumn}
+            onLike={this.handleLike}
+            onDelete={this.handleDelete}
+            onSort={this.handleColumnSort}
+          />
+
+          <div className="container">
+            <Pagination
+              itemCount={totalCount}
+              pageSize={items}
+              currentPage={currentPage}
+              onPageChange={this.handlePageChange}
+            />
+          </div>
+        </div>
+      </div>
     );
   }
 }
