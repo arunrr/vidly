@@ -48,14 +48,13 @@ class MovieMain extends Component {
     this.setState({ selectedGenre: genre, currentPage: 1 });
   };
 
-  render() {
+  getPageData = () => {
     const {
+      selectedGenre,
       movies,
       sortColumn,
       currentPage,
-      items,
-      genres,
-      selectedGenre
+      items
     } = this.state;
 
     const filteredList =
@@ -70,7 +69,20 @@ class MovieMain extends Component {
     );
 
     const moviePageList = pagination(sortedList, currentPage, items);
-    const totalCount = filteredList.length;
+
+    return { totalCount: filteredList.length, data: moviePageList };
+  };
+  render() {
+    const {
+      movies,
+      sortColumn,
+      currentPage,
+      items,
+      genres,
+      selectedGenre
+    } = this.state;
+
+    const { totalCount, data } = this.getPageData();
     const count = movies.length;
 
     return (
@@ -89,8 +101,8 @@ class MovieMain extends Component {
               : 'There are no movies available in the list !!!'}
           </p>
           <Table
-            data={moviePageList}
-            sortColumn={this.state.sortColumn}
+            data={data}
+            sortColumn={sortColumn}
             onLike={this.handleLike}
             onDelete={this.handleDelete}
             onSort={this.handleColumnSort}
