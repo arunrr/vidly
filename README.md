@@ -1,2 +1,2 @@
 # vidly
-A react app that displays list of movie information.
+A react app that provides movie rental facility.
