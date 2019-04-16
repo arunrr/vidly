@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 import TableHeader from './tableHeader';
+import TableBody from './tableBody';
+import Like from './like';
 
 class Table extends Component {
   // Column labels and info used in the table
@@ -22,10 +24,19 @@ class Table extends Component {
       label: 'Stock'
     },
     {
-      key: 'like'
+      key: 'like',
+      content: movie => <Like movie={movie} onLike={this.props.onLike} />
     },
     {
-      key: 'delete'
+      key: 'delete',
+      content: movie => (
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => this.props.onDelete(movie)}
+        >
+          Delete
+        </button>
+      )
     }
   ];
 
@@ -39,6 +50,7 @@ class Table extends Component {
           onSort={onSort}
           columns={this.columns}
         />
+        <TableBody data={this.props.data} columns={this.columns} />
       </table>
     );
   }
